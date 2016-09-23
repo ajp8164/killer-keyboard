@@ -1,0 +1,89 @@
+<div k2-name="digit" class="k2-digit align-{{align}} keyboard-{{theme}} {{roundButtons ? 'round-buttons' : ''}} {{showLetters == false ? 'no-letters' : ''}}" style="width: {{width}};">
+	<div ng-include="'k2/templates/k2-tab-bar.tpl.html'"></div>
+  <div class="k2-row k2-digit-row">
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(1)">
+				<div class="k2-digit-key-number">1
+					<div class="k2-digit-key-letters"></div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(2)">
+				<div class="k2-digit-key-number">2
+					<div class="k2-digit-key-letters">ABC</div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(3)">
+				<div class="k2-digit-key-number">3
+					<div class="k2-digit-key-letters">DEF</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="k2-row k2-digit-row">
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(4)">
+				<div class="k2-digit-key-number">4
+					<div class="k2-digit-key-letters">GHI</div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(5)">
+				<div class="k2-digit-key-number">5
+					<div class="k2-digit-key-letters">JKL</div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(6)">
+				<div class="k2-digit-key-number">6
+					<div class="k2-digit-key-letters">MNO</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="k2-row k2-digit-row">
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(7)">
+				<div class="k2-digit-key-number">7
+					<div class="k2-digit-key-letters">PQRS</div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(8)">
+				<div class="k2-digit-key-number">8
+					<div class="k2-digit-key-letters">TUV</div>
+				</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(9)">
+				<div class="k2-digit-key-number">9
+					<div class="k2-digit-key-letters">WXYZ</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="k2-row k2-digit-row">
+		<div class="k2-digit-key-wrapper {{showLeftAction == false ? 'hidden' : ''}}">
+			<div class="k2-digit-key" ng-click="leftAction($event)" style="{{leftStyle}}">
+				<div class="k2-digit-key-action" bind-html-compile="leftHtml" style="{{leftFontSize}}"></div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper">
+			<div class="k2-digit-key" ng-click="numberAction(0)">
+				<div class="k2-digit-key-number" style="margin-top: -0.30em;">0</div>
+			</div>
+		</div>
+		<div class="k2-digit-key-wrapper {{showRightAction == false ? 'hidden' : ''}}">
+			<div class="k2-digit-key" ng-click="rightAction($event)" style="{{rightStyle}}">
+				<div class="k2-digit-key-action" bind-html-compile="rightHtml" style="{{rightFontSize}}"></div>
+			</div>
+		</div>
+	</div>
+</div>

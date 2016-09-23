@@ -1,0 +1,35 @@
+ { 
+  "name": "killer-keyboard",
+  "description": "A mobile keyboard replacement.",
+  "author": "Andy Phillipson",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "digital", "digit", "numeric", "key", "keyboard", "number", "log", "login", "sms", "lock", "lockscreen", "dial", "pass", "code", "call"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ajp8164/killer-keyboard.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-uglify": "^2.0.0",
+    "load-grunt-tasks": "^3.5.2"
+  },
+  "scripts": {
+    "preinstall": "bower install",
+    "postinstall": "npm run build",
+    "build": "grunt",
+    "clean": "git clean -dfx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/ajp8164/killer-keyboard/issues"
+  }
+}

@@ -1,0 +1,369 @@
+/*
+ *
+ * K2 digit keyboard
+ * 
+ */
+
+.k2-digit-focus {
+	border-color: #007AFF;
+}
+
+.k2-digit {
+}
+
+.k2-digit * {
+	box-sizing: border-box;
+}
+
+.k2-digit .k2-digit-row {
+	display: flex;
+	flex-direction: row;
+	border-bottom: 1px solid #333333;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper {
+	flex: 1;
+	text-align: center;
+	position: relative;
+	height: 53.3px;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper .k2-digit-key {
+	display: block;
+	margin: 0 auto;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	border-right: 1px solid #333333;
+	border-left: 1px solid #333333;
+	line-height: 53.3px;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number {
+	font-size: 1em;
+	vertical-align: middle;
+	display: inline-block;
+	line-height: normal;
+	text-align: center;
+	margin-top: -0.20em;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number .k2-digit-key-letters {
+	font-size: 11px;
+	line-height: 11px;
+	height: 11px;
+	margin-top: 0.0em;
+	letter-spacing: 1px;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number .k2-digit-key-letters.hidden {
+	visibility: hidden;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-action {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	line-height: 53.3px;
+	font-size: 24px;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper.hidden {
+	visibility: hidden;
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper:first-child .k2-digit-key {
+	border-right: none;
+	border-left:none
+}
+
+.k2-digit .k2-digit-row .k2-digit-key-wrapper:last-child .k2-digit-key {
+	border-right: none;
+	border-left: none;
+}
+
+.k2-digit .k2-digit-row:first-child {
+	border-top: 1px solid #333333;
+}
+
+.k2-digit .k2-digit-row:last-child {
+	border: none;
+}
+
+.k2-digit .k2-digit-row:last-child .k2-digit-key-wrapper .k2-digit-key {
+}
+
+.k2-digit.align-center {
+	margin: 0 auto;
+}
+
+.k2-digit.align-left {
+	margin-right: auto;
+}
+
+.k2-digit.align-right {
+	margin-left: auto;
+}
+
+/*
+ * No letters
+ */
+.k2-digit.no-letters .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number {
+	margin-top: -0.30em;
+}
+
+.k2-digit.no-letters .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number .k2-digit-key-letters {
+	display: none;
+}
+
+/*
+ * Round buttons
+ */
+.k2-digit.round-buttons .k2-digit-row {
+	border: none;
+}
+
+.k2-digit.round-buttons .k2-digit-row .k2-digit-key-wrapper {
+	margin: 10px 0 0 0;
+}
+
+.k2-digit.round-buttons .k2-digit-row .k2-digit-key-wrapper .k2-digit-key {
+	width: 60px;
+	-webkit-border-radius: 100%;
+	-moz-border-radius: 100%;
+	border-radius: 100%;
+	border: 1px solid #333333;
+}
+
+.k2-digit.round-buttons .k2-digit-row:last-child .k2-digit-key-wrapper {
+	margin-bottom: 10px;
+}
+
+.k2-digit.round-buttons.no-letters .k2-digit-row .k2-digit-key-wrapper .k2-digit-key .k2-digit-key-number {
+	height: 57.6px;
+	line-height: 57.6px;
+}
+
+/*
+ * Theme - Light
+ */
+.k2-digit.keyboard-light * {
+	border-color: #E6E6E6 !important;
+}
+
+.k2-digit.keyboard-light .k2-digit-key {
+	background: #FFFFFF;
+	color: #444444;
+}
+
+.k2-digit.keyboard-light .k2-digit-key:active {
+	background: #E6E6E6;
+}
+
+/*
+ * Theme - Stable
+ */
+.k2-digit.keyboard-stable * {
+	border-color: #DFDFDF !important;
+}
+
+.k2-digit.keyboard-stable .k2-digit-key {
+	background: #F8F8F8;
+	color: #444444;
+}
+
+.k2-digit.keyboard-stable .k2-digit-key:active {
+	background: #DFDFDF;
+}
+
+/*
+ * Theme - Positive
+ */
+.k2-digit.keyboard-positive * {
+	border-color: #0C60EE !important;
+}
+
+.k2-digit.keyboard-positive .k2-digit-key {
+	background: #387EF5;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-positive .k2-digit-key:active {
+	background: #0C60EE;
+}
+
+/*
+ * Theme - Calm
+ */
+.k2-digit.keyboard-calm * {
+	border-color: #0A9DC7 !important;
+}
+
+.k2-digit.keyboard-calm .k2-digit-key {
+	background: #11C1F3;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-calm .k2-digit-key:active {
+	background: #0A9DC7;
+}
+
+/*
+ * Theme - Balanced
+ */
+.k2-digit.keyboard-balanced * {
+	border-color: #28A54C !important;
+}
+
+.k2-digit.keyboard-balanced .k2-digit-key {
+	background: #33CD5F;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-balanced .k2-digit-key:active {
+	background: #28A54C;
+}
+
+/*
+ * Theme - Energized
+ */
+.k2-digit.keyboard-energized * {
+	border-color: #E6B500 !important;
+}
+
+.k2-digit.keyboard-energized .k2-digit-key {
+	background: #FFC900;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-energized .k2-digit-key:active {
+	background: #E6B500;
+}
+
+/*
+ * Theme - Assertive
+ */
+.k2-digit.keyboard-assertive * {
+	border-color: #E42112 !important;
+}
+
+.k2-digit.keyboard-assertive .k2-digit-key {
+	background: #EF473A;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-assertive .k2-digit-key:active {
+	background: #E42112;
+}
+
+/*
+ * Theme - Royal
+ */
+.k2-digit.keyboard-royal * {
+	border-color: #6B46E5 !important;
+}
+
+.k2-digit.keyboard-royal .k2-digit-key {
+	background: #886AEA;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-royal .k2-digit-key:active {
+	background: #6B46E5;
+}
+
+/*
+ * Theme - Dark
+ */
+.k2-digit.keyboard-dark * {
+	border-color: #2B2B2B !important;
+}
+
+.k2-digit.keyboard-dark .k2-digit-key {
+	background: #444444;
+	color: #FFFFFF;
+}
+
+.k2-digit.keyboard-dark .k2-digit-key:active {
+	background: #2B2B2B;
+}
+
+/*
+ * Theme - Opaque black
+ */
+.k2-digit.keyboard-opaque-black * {
+	border-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.k2-digit.keyboard-opaque-black .k2-digit-key {
+	background: rgba(0, 0, 0, 0.15);
+	color: rgba(0, 0, 0, 0.75);
+}
+
+.k2-digit.keyboard-opaque-black .k2-digit-key:active {
+	background: rgba(0, 0, 0, 0.25);
+}
+
+/*
+ * Theme - Opaque white
+ */
+.k2-digit.keyboard-opaque-white * {
+	border-color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.k2-digit.keyboard-opaque-white .k2-digit-key {
+	background: rgba(255, 255, 255, 0.15);
+	color: rgba(255, 255, 255, 0.75);
+}
+
+.k2-digit.keyboard-opaque-white .k2-digit-key:active {
+	background: rgba(255, 255, 255, 0.25);
+}
+
+/*
+ * Theme - iOS
+ */
+.k2-digit.keyboard-ios * {
+	border-color: #C9CFD6 !important;
+}
+
+.k2-digit.keyboard-ios .k2-digit-row:first-child {
+	border-top: none;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key {
+	background: #FFFFFF;
+	color: #000000;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key:active {
+	background: #C9CFD6;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key-left,
+.k2-digit.keyboard-ios .k2-digit-key-right {
+  height: 100%;
+  background-color: #C4C7D2;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key-left:active,
+.k2-digit.keyboard-ios .k2-digit-key-right:active {
+  background-color: #FFFFFF;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key-decimal {
+	font-weight: 600;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key-delete svg {
+  width: 20%;
+  height: 100%;
+}
+
+.k2-digit.keyboard-ios .k2-digit-key-delete path {
+	fill: #000000;
+}
