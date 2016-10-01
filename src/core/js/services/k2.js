@@ -13,7 +13,8 @@ angular.module('k2').factory('k2', function(k2i) {
 	 * @description
 	 * The presentation mode of the keyboard.
 	 * 
-	 * FULL - Present the accessory bar and the keyboard keys.
+	 * NONE - Hide all keyboard elements.
+	 * ALL - Present the accessory bar and the keyboard keys.
 	 * ACCESSORY_BAR_ONLY - Present only the accessory bar.
 	 * KEYBOARD_KEYS_ONLY - Prersent only the keyboard keys.
 	 */
@@ -30,7 +31,7 @@ angular.module('k2').factory('k2', function(k2i) {
 	 *
 	 * **Note:** The view must include a <k2> node.
 	 *
-	 * @param {function} callback When keyboard value is changed, this callback sets your model.
+	 * @param {function} keyBindFunc When keyboard value is changed, this function sets your model value.
 	 * @param {Object} opts Keyboard options.
 	 * @returns {undefined}.
 	 *
@@ -38,7 +39,7 @@ angular.module('k2').factory('k2', function(k2i) {
 	 * 
    *   name - The name of the keyboard to present ('default').
    *   animate - Whether or not the keyboard should animate in (true).
-   *   mode - What parts the keyboard should present (FULL).
+   *   mode - What parts the keyboard should present (ALL).
    *   value - The initial value of the keyboard ('').
    *   
 	 * @example
@@ -47,8 +48,8 @@ angular.module('k2').factory('k2', function(k2i) {
 	 *     this[kbModel] = keyboardValue;
    *   }), opts);
 	 */
-	root.showKeyboard = function(callback, opts) {
-		return k2i.showKeyboard(callback, opts);
+	root.showKeyboard = function(keyBindFunc, opts) {
+		return k2i.showKeyboard(keyBindFunc, opts);
 	};
 
 	/**

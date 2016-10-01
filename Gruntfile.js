@@ -21,13 +21,15 @@ module.exports = function(grunt) {
           'src/core/js/k2.module.js',
           'src/core/js/directives/*.js',
           'src/core/js/services/*.js',
-          'src/keyboards/**/js/*.js',
+          'src/accessoryBars/**/js/*.js',
+          'src/keyboards/**/js/*.js'
         ],
         dest: 'dist/k2.js'
       },
       css: {
         src: [
           'src/core/css/*.css',
+          'src/accessoryBars/**/css/*.css',
           'src/keyboards/**/css/*.css'
         ],
         dest: 'dist/k2.css'
@@ -40,7 +42,7 @@ module.exports = function(grunt) {
         src: [
           'src/**/templates/*.html'
         ],
-        dest: 'dist/templates/'
+        dest: 'dist/k2/templates/'
       },
       images: {
         expand: true,
@@ -48,7 +50,7 @@ module.exports = function(grunt) {
         src: [
           'src/**/img/*.*'
         ],
-        dest: 'dist/img/'
+        dest: 'dist/k2/img/'
       },
       fonts: {
         expand: true,
@@ -56,7 +58,7 @@ module.exports = function(grunt) {
         src: [
           'fonts/*'
         ],
-        dest: 'dist/fonts/'
+        dest: 'dist/k2/fonts/'
       }
     },
     uglify: {

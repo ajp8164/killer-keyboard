@@ -28,16 +28,19 @@ angular.module('k2')
               }
             },
             function (newName, oldName) {
-              if (newName != oldName) {
+              if (newName && newName != oldName) {
                 // Determine the height of the keyboard.
                 var height = {};
                 var kbElem = angular.element(document.querySelectorAll('.k2')[0]);
 
+                var wasHidden = kbElem.hasClass('ng-hide');
                 kbElem.removeClass('ng-hide');
-                height[k2i.modes.FULL] = document.querySelectorAll('.k2')[0].clientHeight;
+                height[k2i.modes.ALL] = document.querySelectorAll('.k2')[0].clientHeight;
                 height[k2i.modes.ACCESSORY_BAR_ONLY] = document.querySelectorAll('.k2 .k2-acc-bar')[0].clientHeight;
-                height[k2i.modes.KEYBOARD_KEYS_ONLY] = height[k2i.modes.FULL] - height[k2i.modes.ACCESSORY_BAR_ONLY];
-                kbElem.addClass('ng-hide');
+                height[k2i.modes.KEYBOARD_KEYS_ONLY] = height[k2i.modes.ALL] - height[k2i.modes.ACCESSORY_BAR_ONLY];
+                if (wasHidden) {
+                  kbElem.addClass('ng-hide');
+                }
 
                 $rootScope.$emit('K2KeyboardInDOM', newName, height);
               }

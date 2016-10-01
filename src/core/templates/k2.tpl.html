@@ -1,4 +1,5 @@
 <div class="k2 animation-{{animation}} {{(ngShow == false || ngHide == true) ? 'ng-hide ng-hide-animate' : ''}}" ng-show="k2Visible">
+	<div class="k2-template" ng-include="'k2/templates/k2-tab.tpl.html'" ng-if="k2Name == 'tab'"></div>
 	<div class="k2-template" ng-include="'k2/templates/k2-calculator.tpl.html'" ng-if="k2Name == 'calculator'"></div>
 	<div class="k2-template" ng-include="'k2/templates/k2-digit.tpl.html'" ng-if="k2Name == 'digit'"></div>
 </div>

@@ -70,9 +70,9 @@
 		</div>
 	</div>
 	<div class="k2-row k2-digit-row">
-		<div class="k2-digit-key-wrapper {{showLeftAction == false ? 'hidden' : ''}}">
-			<div class="k2-digit-key" ng-click="leftAction($event)" style="{{leftStyle}}">
-				<div class="k2-digit-key-action" bind-html-compile="leftHtml" style="{{leftFontSize}}"></div>
+		<div class="k2-digit-key-wrapper {{showDecimalAction == false ? 'hidden' : ''}}">
+			<div class="k2-digit-key" ng-click="buttonDecimalAction($event)" style="{{buttonDecimalStyle}}">
+				<div class="k2-digit-key-action" bind-html-compile="buttonDecimalHtml" style="{{buttonDecimalFontSize}}"></div>
 			</div>
 		</div>
 		<div class="k2-digit-key-wrapper">
@@ -80,9 +80,9 @@
 				<div class="k2-digit-key-number" style="margin-top: -0.30em;">0</div>
 			</div>
 		</div>
-		<div class="k2-digit-key-wrapper {{showRightAction == false ? 'hidden' : ''}}">
-			<div class="k2-digit-key" ng-click="rightAction($event)" style="{{rightStyle}}">
-				<div class="k2-digit-key-action" bind-html-compile="rightHtml" style="{{rightFontSize}}"></div>
+		<div class="k2-digit-key-wrapper {{showDeleteAction == false ? 'hidden' : ''}}">
+			<div class="k2-digit-key" ng-click="buttonDeleteAction($event)" style="{{buttonDeleteStyle}}">
+				<div class="k2-digit-key-action" bind-html-compile="buttonDeleteHtml" style="{{buttonDeleteFontSize}}"></div>
 			</div>
 		</div>
 	</div>

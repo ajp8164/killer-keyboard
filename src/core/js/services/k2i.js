@@ -5,69 +5,32 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
   var root = {};
 
 	root.modes = {
-	  FULL: 'full',
+	  NONE: 'none',
+	  ALL: 'all',
 	  ACCESSORY_BAR_ONLY: 'acc-bar-only',
 	  KEYBOARD_KEYS_ONLY: 'keys-only'
 	};
 
 	$rootScope.k2Visible = false;
 
+	var accessoryBarRegistry = {};
 	var animationDuration = 400;
 	var cancelKeyListener;
 	var cancelTemplateListener;
 	var keyboardFocusedElement = undefined;
 	var keyboardHeight = [];
-	var keyboardMode = root.modes.FULL;
+	var keyboardMode = root.modes.ALL;
 	var keyboardRegistry = {};
 	var keyboardScope = undefined;
 	var keyboardSettings = undefined;
 	var keyboardValue = '';
 	var nativeKeyboardPresented = false;
-	var resizeContentHeightAttr = '';
+	var resizableHeightAttr = undefined;
 	var windowHeight = 0;
 
   var defaultHideOptions = {
   	animate: true
   };
-
-	///////////////////////////////////////////////////////////////////////////////////
-	///
-	/// Accessory bar definitions
-	/// 
-	var noAccessoryBar = {};
-
-	var tabBar = {
-		button0: {
-			html: '<div class="k2-key-tab-prev"><div class="svg-image" src="k2/img/k2-previous.svg"></div>',
-			action: function(scope) {
-				$rootScope.$emit('K2Tab', false, scope);
-			},
-			style: {
-			}
-		},
-		button1: {
-			html: '<div class="k2-key-tab-next"><div class="svg-image" src="k2/img/k2-next.svg"></div>',
-			action: function(scope) {
-				$rootScope.$emit('K2Tab', true, scope);
-			},
-			style: {
-			}
-		},
-		button2: {
-			html: '<div class="k2-key-tab-done">Done</div>',
-			action: function(scope) {
-				root.hideKeyboard();
-			},
-			style: {
-				right: '5px'
-			}
-		}
-	};
-
-	var accessoryBar = {
-		default: noAccessoryBar,
-		tab: tabBar
-	};
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///
@@ -83,24 +46,28 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
   	// Animation type.
   	animation: 'slide-up',
 
+  	// Keyboard theme.
+  	theme: 'stable',
+
   	// Whether or not tabbing should wrap top and bottom.
     infiniteTab: false,
 
   	// What parts the keyboard should present.
-  	mode: root.modes.FULL,
+  	mode: root.modes.ALL,
 
   	// The initial value of the keyboard.
   	initialValue: '',
 
   	// Keyboard accessory bar.
-		accessoryBar: noAccessoryBar,
+		accessoryBar: {},
 
-		//
+		// Defines the content to resize when the keyboard is presented.
     resizeContent: {
       enable: true,
-      element: '[k2-resizeable]'
+      element: '.k2-resizable'
     },
 
+    // Action to perform when a keyboard key is pressed.
 		action: function(key) {
 			$rootScope.$emit('K2Key', key.toString());
 		},
@@ -120,8 +87,18 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 			if (settings.name in keyboardRegistry) {
 				lodash.merge(settings, keyboardRegistry[settings.name]);
 			}
-			settings.accessoryBar = accessoryBar[settings.accessoryBar || 'default'];
+			settings.accessoryBar = accessoryBarRegistry[settings.accessoryBar || 'default'];
 			keyboardRegistry[settings.name] = settings;
+		}
+	};
+
+	root.registerAccessoryBar = function(settings) {
+		if (settings.name) {
+			// Merge existing accessory bar settings with the callers settings.
+			if (settings.name in accessoryBarRegistry) {
+				lodash.merge(settings, accessoryBarRegistry[settings.name]);
+			}
+			accessoryBarRegistry[settings.name] = settings;
 		}
 	};
 
@@ -133,35 +110,41 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		keyboardValue = value;
 	};
 
-	root.showKeyboard = function(callback, settings) {
-		callback = callback || function(){};
-
+	root.showKeyboard = function(keyBindFunc, settings) {
 		var userKeyboardSettings = settings || defaultKeyboardSettings;
 		keyboardSettings = lodash.cloneDeep(defaultKeyboardSettings);
 		var targetKeyboardSettings = keyboardRegistry[settings.name];
 		lodash.merge(keyboardSettings, targetKeyboardSettings, userKeyboardSettings);
 
-		// Trigger showing the keyboard.
-		if (keyboardIsInDOM(keyboardSettings.name)) {
-			// The requested keyboard is already in the DOM.
-			initialize(callback, keyboardSettings);
-			$rootScope.k2Visible = true;
-		} else {
-
-			// Link the keyboard with scope and bring it into the DOM.
-			keyboardSettings.link(keyboardScope, keyboardSettings);
-
-			if (cancelTemplateListener) {
-				cancelTemplateListener();
-			}
-
-			// Wait for the requested keyboard to be added to the DOM.
-		  cancelTemplateListener = $rootScope.$on('K2KeyboardInDOM', function(event, name, height) {
-				initialize(callback, keyboardSettings);
-				$rootScope.k2Visible = true;
-        $rootScope.$emit('K2Ready', height);
-		  });
+		if (resizableHeightAttr == undefined) {
+			resizableHeightAttr = getResizableElement().css('height');
 		}
+
+		// Don't continue until we know the keyboard position has been reset.
+		positionKeyboard(null, function() {
+
+			// Trigger showing the keyboard.
+			if (keyboardIsInDOM(keyboardSettings.name)) {
+				// The requested keyboard is already in the DOM.
+				initialize(keyBindFunc, keyboardSettings);
+				$rootScope.k2Visible = true;
+			} else {
+
+				// Link the keyboard with scope and bring it into the DOM.
+				keyboardSettings.link(keyboardScope, keyboardSettings);
+
+				if (cancelTemplateListener) {
+					cancelTemplateListener();
+				}
+
+				// Wait for the requested keyboard to be added to the DOM.
+			  cancelTemplateListener = $rootScope.$on('K2KeyboardInDOM', function(event, name, height) {
+					initialize(keyBindFunc, keyboardSettings);
+					$rootScope.k2Visible = true;
+	        $rootScope.$emit('K2Ready', height);
+			  });
+			}
+		});
 	};
 
 	root.hideKeyboard = function(callback, opts) {
@@ -191,6 +174,16 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		// Trigger hiding the keyboard.
 		$rootScope.k2Visible = false;
 
+		// Reset our state if the native keyboard was closed.
+		nativeKeyboardPresented = false;
+		enableResizableAnimation();
+		positionKeyboard(null, true);
+
+		if (nativeKeyboardIsVisible()) {
+			nativeKeyboardDisableAnimation(false);
+			nativeKeyboard.hide();
+		}
+		
 		// Callback after the keyboard animation has finished.
 		var cancelHiddenListener = $rootScope.$on('K2Hidden', function() {
 			callback();
@@ -212,6 +205,7 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 			keyboardFocusedElement.removeClass('k2-focus');
 		}
 
+		element[0].focus();
 		keyboardFocusedElement = element;
 
 		if (!nativeKeyboardshouldBeUsed()) {
@@ -220,11 +214,9 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 
 		// Use timeout to wait for the keyboard to finish rendering.
 		$timeout(function() {
-			if ($rootScope.k2Visible && !keyboardSettings.infiniteTab) {
-				// Update the tab bar for current tab position.
-		    $rootScope.$emit('K2UpdateTabBar', keyboardSettings);
-		  }
-		}, 0);
+			// Update the tab bar for current tab position.
+	    $rootScope.$emit('K2UpdateTabBar', keyboardSettings);
+		});
 	};
 
 	root.scrollIntoView = function(element) {
@@ -236,16 +228,16 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		  var scrollableHeight = scrollableElem.clientHeight;
 		  var scrollableRect = scrollableElem.getBoundingClientRect();
 		  var absoluteDestY = scrollableRect.top + (scrollableHeight / 2);
-
 		  var scrollTop = absoluteElementY - absoluteDestY;
 
 		  $(keyboardSettings.resizeContent.element).animate({
 		    scrollTop: scrollTop
 		  }, { duration: animationDuration, queue: false });
-		}, 0);
+		});
 	};
 
   root.initK2 = function(scope) {
+  	windowHeight = $(window).height();
 
   	// Set the keyboard scope from the directive.
   	keyboardScope = scope;
@@ -270,10 +262,11 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
     scope.$watch("ngShow", ngShow);
     scope.$watch("ngHide", ngHide);
 
-    // Hide the native keyboard accessory bar.
-    if (platformInfo.isCordova && Keyboard) {
-      Keyboard.hideFormAccessoryBar(true);
-    }
+    nativeKeyboardHideAccessoryBar(true);
+  };
+
+  root.initNoK2 = function() {
+    nativeKeyboardHideAccessoryBar(false);
   };
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -285,13 +278,12 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
   $templateRequest('k2/templates/k2.tpl.html');
 
   $rootScope.$on('K2Ready', function(event, height) {
-  	windowHeight = $(window).height();
 		keyboardHeight = height;
- 		resizeContentHeightAttr = getResizeElement().style.height;
   });
 
   $rootScope.$on('K2Tab', tabListener);
 	$rootScope.$on('K2UpdateTabBar', tabBarListener);
+	$rootScope.$on('K2Shown', tabBarListener);
 
 	function keyboardIsInDOM(name) {
 		if (name == '_any') {
@@ -314,7 +306,7 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
     }, animationDuration);
   };
 
-	function initialize(callback, keyboardSettings) {
+	function initialize(keyBindFunc, keyboardSettings) {
 		// Setup keyboard for presentation.
 		setupKeyboard(keyboardSettings.mode);
 
@@ -327,63 +319,90 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		}
 		cancelKeyListener = $rootScope.$on('K2Key', function(event, key) {
 			keyboardSettings.keyListener(key);
-	    callback(keyboardValue);
+	    keyBindFunc(keyboardValue);
 		});
 	};
 
-	// The timing and orchestration of this function allows our accessory bar to be displayed smoothly
-	// with the native keyboard.
+	// The timing and orchestration of this function allows the k2 keyboard to interact smoothly with the
+	// native keyboard.
 	function setupKeyboard(mode) {
+
+		// If the keyboard is already visible then disable resizable animation while the keyboard is presented.
+		// This prevents the animation from the running when transitioning between k2 and native keyboard (which
+		// is visually unappealing).
+		if ($rootScope.k2Visible) {
+			disableResizableAnimation();
+			nativeKeyboardDisableAnimation(true);
+		}
+
 		if (nativeKeyboardshouldBeUsed()) {
+
+			// Disable keyboard animation while we re-position (for accessory bar) based on new view size
+			// after native keyboard is presented.
+//			disableAnimation();
+
 			// Prepare for native keyboard presentation.
-			// Remove our keyboard immediately.
-			showAccessoryBar(false);
-			showKeyboardKeys(false);
+			// Remove our keyboard immediately.  Callback waits for DOM to render and allows the native keyboard to
+			// start animating into the view.
+			setKeyboardMode(root.modes.NONE, function() {
 
-			// Position the top of our keyboard below the window; disable animation during this operation.
-			disableAnimation();
-			positionKeyboardOutOfView();
-			restoreContent();
-
-			// Use timeout to allow the native keyboard to start animating into the view.
-			$timeout(function() {
 				nativeKeyboardPresented = true;
 
 				// Setup keyboard and position the it into the view (the native keyboard has already resized our window).
 				setKeyboardMode(mode);
-				positionKeyboardInView();
+
+			 	// Resize view for using only an accessory bar.
+				resizeContent();
+
+				// Re-position the top of the keyboard based on the new window size (after the keyboard has resized the view).
+				var top = window.innerHeight - keyboardHeight[root.modes.ACCESSORY_BAR_ONLY];
+				positionKeyboard(top, true);
 
 				// Allow for keyboard positioning without animation before re-enabling it.
-				$timeout(function() {
-					enableAnimation();
-		  		$rootScope.$apply();
-				}, 0);
-			}, 0);
-
+//				$timeout(function() {
+//					enableAnimation();
+//		  		$rootScope.$apply();
+//				});
+			});
 		} else {
 
 			var comingFromNativeKeyboard = nativeKeyboardPresented;
 			nativeKeyboardPresented = false;
 
-			// If coming from the native keyboard to our keyboard then we need to allow the native animation
-			// and view resize to start before we show our keyboard.
-			if (comingFromNativeKeyboard) {
-				resizeContent();
-				
-				$timeout(function() {
+//			if (comingFromNativeKeyboard) {
+//				// Ensure the positioning of the top of our keyboard is not affected by previous native keyboard use.
+//				disableAnimation();
+
+//				$timeout(function() {
+//					enableAnimation();
+//				});
+//			}
+
+			// Allow the keyboard top be reset before changing mode, etc.
+			$timeout(function() {
+				// If coming from the native keyboard to our keyboard then we need to allow the native animation
+				// and view resize to start before we show our keyboard.
+				if (comingFromNativeKeyboard) {
+
+					$timeout(function() {
+					 	// Set up the keyboard and resize the view for the keyboard mode.
+						setKeyboardMode(mode);
+						resizeContent();
+					});
+				} else {
 					setKeyboardMode(mode);
-					positionKeyboardInView();
-				}, 0);
-			} else {
-				setKeyboardMode(mode);
-				positionKeyboardInView();
-			}
+				}
+			});
 		}
 	};
 
-	function setKeyboardMode(mode, animate) {
+	function setKeyboardMode(mode, callback) {
 		keyboardMode = mode;
 		switch(keyboardMode) {
+			case root.modes.NONE:
+				showAccessoryBar(false);
+				showKeyboardKeys(false);
+				break;
 			case root.modes.ACCESSORY_BAR_ONLY:
 				showAccessoryBar(true);
 				showKeyboardKeys(false);
@@ -392,11 +411,17 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 				showAccessoryBar(false);
 				showKeyboardKeys(true);
 				break;
-			case root.modes.FULL:
+			case root.modes.ALL:
 			default:
 				showAccessoryBar(true);
 				showKeyboardKeys(true);
 				break;
+		}
+		// Allows the keyboard to render.
+		if (callback) {
+			$timeout(function() {
+				callback();
+			});
 		}
 	};
 
@@ -404,24 +429,56 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		return angular.element(document.querySelectorAll('.k2'));
   };
 
-	function positionKeyboardInView() {
-		// Position the keyboard in view.
-		var top = $(window).height()  - keyboardHeight[keyboardMode];
-		getKeyboardElement().css('top', top + 'px');
-	};
+	function positionKeyboard(top, functionOrBool) {
+		var callback = function(){};
+		var disableAnimation = false;
+		if (typeof functionOrBool == 'function') {
+			callback = functionOrBool;
+			disableAnimation = true;
+		} else {
+			disableAnimation = functionOrBool;
+		}
 
-	function positionKeyboardOutOfView() {
-		// Position the keyboard top at the bottom of the window (out of view).
-		var top = windowHeight;
-		getKeyboardElement().css('top', top + 'px');
-	};
+		// Short circuit if there is nothing to do.
+		var currentTop = getKeyboardElement().css('top');
+		if (!top && currentTop == '') {
+			return callback();
+		}
 
+		if (disableAnimation) {
+			// Disable keyboard animation.
+			getKeyboardElement().removeClass('animation-slide-up');
+		}
+
+		if (top) {
+			getKeyboardElement().css('top', top + 'px');
+		} else {
+			getKeyboardElement().css('top', '');
+		}
+
+		if (disableAnimation) {
+			$timeout(function() {
+				// Enable keyboard animation.
+				getKeyboardElement().addClass('animation-slide-up');
+				callback();
+			});
+		}
+	};
+/*
 	function disableAnimation() {
 		getKeyboardElement().removeClass('animation-slide-up');
 	};
 
 	function enableAnimation() {
 		getKeyboardElement().addClass('animation-slide-up');
+	};
+*/
+	function disableResizableAnimation() {
+		getResizableElement().addClass('animation-none');
+	};
+
+	function enableResizableAnimation() {
+		getResizableElement().removeClass('animation-none');
 	};
 
 	function showAccessoryBar(display, animate) {
@@ -440,21 +497,22 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
 		return keyboardFocusedElement.attr('k2-bind') == null;
   };
 
-  function getResizeElement() {
-		return document.querySelectorAll(keyboardSettings.resizeContent.element)[0];
+  function getResizableElement() {
+		return angular.element(document.querySelectorAll(keyboardSettings.resizeContent.element));
   };
 
   function restoreContent() {
     if (keyboardSettings && keyboardSettings.resizeContent.enable) {
-      getResizeElement().style.height = resizeContentHeightAttr;
+      getResizableElement().css('height', resizableHeightAttr);
+      resizableHeightAttr = undefined;
     }
   };
   
   function resizeContent(callback) {
 		if (keyboardSettings && keyboardSettings.resizeContent.enable) {
-    	var elToResize = getResizeElement();
+    	var elToResize = getResizableElement();
       var kbHeight = keyboardHeight[keyboardMode];
-      elToResize.style.height = 'calc(100% - ' + kbHeight + 'px)';
+      elToResize.css('height', 'calc(100% - ' + kbHeight + 'px)');
     }
 
     if (callback) {
@@ -506,14 +564,14 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
       // Chnage the keyboard mode, refresh our resizable content, and rescroll the in-focus element.
       // This process allows the tabbing of fields between custom and native keyboards.
 
+		  // Any keyboard will do, we just need the accessory bar (tab bar in this case, since we're inside the tab listener).
       var settings = {
-        name: '_any',  // Any keyboard will do, we just need the accessory bar (tab bar in this case).
+        name: '_any',
 				mode: root.modes.ACCESSORY_BAR_ONLY
       };
 
       root.showKeyboard(null, settings);
       root.scrollIntoView(nextElem);
-      nextElem[0].focus();
       return;
     }
 
@@ -521,18 +579,13 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
       // Strip the model variable name (everything from last '.' to end) from scope qualified string.
       var nextModelName = nextElem.attr('ng-model').match(/[^\.]+$/g)[0];
 
-      // Bind the model to the keyboard and show the keyboard.
-      var settings = {
-        name: nextElem.attr('k2-bind')
-      };
-
       // Execute the elements click handler to run the input field click handler.
       // This executes users desired functionality when the field is selected without a touch click.
 			nextElem.triggerHandler('click');
 
       // Ensure the field is visible in the resized view.
       root.scrollIntoView(nextElem);
-    }, 0);
+    });
   };
 
   function tabBarListener(event) {
@@ -560,6 +613,37 @@ angular.module('k2').factory('k2i', function($rootScope, $timeout, $templateRequ
     } else {
       tabPreviousElement.addClass('disabled');
     }
+  };
+
+	///////////////////////////////////////////////////////////////////////////////////
+	///
+	/// Native keyboard wrapper
+	/// 
+
+  function nativeKeyboardDisableAnimation(b) {
+    if (platformInfo.isCordova && Keyboard) {
+			Keyboard.disableAnimation(b);
+		}
+  };
+
+  function nativeKeyboardHideAccessoryBar(b) {
+    if (platformInfo.isCordova && Keyboard) {
+	    Keyboard.hideFormAccessoryBar(b);
+	  }
+  };
+
+  function nativeKeyboardHide() {
+    if (platformInfo.isCordova && Keyboard) {
+	    Keyboard.hide();
+	  }
+  };
+
+  function nativeKeyboardIsVisible() {
+    if (platformInfo.isCordova && Keyboard) {
+			return Keyboard.isVisible;
+		} else {
+			return false;
+		}
   };
 
   return root;

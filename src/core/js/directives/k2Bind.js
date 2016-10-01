@@ -41,9 +41,9 @@ angular.module('k2')
             }), settings);
             // If the keyboard was not previously shown then scroll the element into the resized view.
             if (!kbAlreadyShown) {
-              k2i.scrollIntoView(elem[0]);
+              k2i.scrollIntoView(elem);
             }
-          }, 0);
+          });
         });
       }
     }

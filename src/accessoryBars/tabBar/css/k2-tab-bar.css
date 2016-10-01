@@ -1,0 +1,65 @@
+/*
+ *
+ * K2 tab bar
+ * 
+ */
+
+.k2 .k2-tab-bar {
+  display: -webkit-box;
+  height: 44px;
+  width: 100%;
+  border-top: 1px solid;
+}
+
+.k2 .k2-tab-wrapper {
+  position: relative;
+  height: 44px;
+}
+
+.k2 .k2-tab-wrapper.right {
+  position: absolute;
+  right: 0;
+}
+
+.k2 .k2-tab-button {
+  height: 100%;
+  font-size: 15px;
+  text-align: center;
+  color: #000000;
+}
+
+.k2 .k2-tab-action {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+}
+
+.k2 .k2-tab-button .k2-key-tab-prev svg,
+.k2 .k2-tab-button .k2-key-tab-next svg {
+  width: 22px;
+  height: auto;
+  margin-top: 5px;
+}
+
+/*
+ * Tab bar theme - iOS
+ */
+.k2 .keyboard-ios .k2-tab-bar {
+  background-color: #EBECEE;
+  border-color: #C9CFD6 !important;
+}
+
+.k2 .keyboard-ios .k2-tab-button {
+  color: #007AFF;
+}
+
+.k2 .keyboard-ios .k2-tab-button .k2-key-tab-prev path,
+.k2 .keyboard-ios .k2-tab-button .k2-key-tab-next path {
+  fill: #007AFF;
+}
+
+.k2 .keyboard-ios .k2-tab-button.disabled .k2-key-tab-prev path,
+.k2 .keyboard-ios .k2-tab-button.disabled .k2-key-tab-next path {
+  fill: #CCCCCC;
+}

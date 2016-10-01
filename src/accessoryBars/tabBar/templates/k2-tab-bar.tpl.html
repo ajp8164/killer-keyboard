@@ -1,0 +1,17 @@
+<div class="k2-acc-bar k2-tab-bar">
+	<div class="k2-tab-wrapper {{showButtonPreviousAction == false ? 'hidden' : ''}}" style="{{buttonPreviousWrapperStyle}}">
+		<div class="k2-tab-button" ng-click="buttonPreviousAction($event)" style="{{buttonPreviousStyle}}">
+			<div class="k2-tab-action" bind-html-compile="buttonPreviousHtml" style="{{buttonPreviousFontSize}}"></div>
+		</div>
+	</div>
+	<div class="k2-tab-wrapper {{showButtonNextAction == false ? 'hidden' : ''}}" style="{{buttonNextWrapperStyle}}">
+		<div class="k2-tab-button" ng-click="buttonNextAction($event)" style="{{buttonNextStyle}}">
+			<div class="k2-tab-action" bind-html-compile="buttonNextHtml" style="{{buttonNextFontSize}}"></div>
+		</div>
+	</div>
+	<div class="k2-tab-wrapper {{showButtonDoneAction == false ? 'hidden' : ''}}" style="{{buttonDoneWrapperStyle}}">
+		<div class="k2-tab-button" ng-click="buttonDoneAction($event)" style="{{buttonDoneStyle}}">
+			<div class="k2-tab-action" bind-html-compile="buttonDoneHtml" style="{{buttonDoneFontSize}}"></div>
+		</div>
+	</div>
+</div>
