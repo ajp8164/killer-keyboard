@@ -1,6 +1,3 @@
-# App
-dist/*
-
 # Dependency directory
 node_modules
 
